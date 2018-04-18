@@ -24,7 +24,7 @@ typedef struct _score{
 
 typedef struct _game{
 
-    char secret_word[81], tip[256];
+    char secret_word[51], tip[256];
     int chances;
     Score score;
 
@@ -38,7 +38,8 @@ void objects(Mysql *ptr_mysql, Game *ptr_game);
 
 bool hangman(Game *ptr_game);
 
-void SaveScore(Mysql *ptr_mysql, Game *ptr_game);
+bool GoodScore(Mysql *ptr_mysql, Game *ptr_game, short int *playerID);
+void SaveScore(Mysql *ptr_mysql, Game *ptr_game, short int playerID);
 
 int main(void){
 
@@ -48,6 +49,7 @@ int main(void){
     MysqlStartConnection(mysql);
 
     char opc, YN;
+    short int playerID;
 
     do{
 
@@ -64,6 +66,9 @@ int main(void){
 
         opc=getchar();
 
+        system("clear");
+        __fpurge(stdin);
+
         switch(opc){
 
             case '1':
@@ -72,25 +77,32 @@ int main(void){
 
                 if(hangman(game)!=true){
 
-                    printf("Você perdeu!!!\nO animal secreto era %s\n", game->secret_word);
-                    printf("Total de acertos: %d\n", game->score.points);
-                    printf("Total de erros: %d\n", game->score.errors);
+                    printf("Você perdeu!!!\nO animal secreto era %s\n\n", game->secret_word);
+                    printf("Acertos: %d\n", game->score.points);
+                    printf("Erros: %d\n", game->score.errors);
+                    printf("Total de acertos: %d\n", game->score.total_points);
+                    printf("Total de erros: %d\n", game->score.total_errors);
                     printf("Partidas vencidas: %d\n", game->score.total_wins);
                     printf("Partidas perdidas: %d\n", game->score.total_losses);
-                    printf("Total de partidas jogadas: %d\n", game->score.total_matches);
+                    printf("Total de partidas jogadas: %d\n\n", game->score.total_matches);
 
                 }else{
 
-                    printf("Você ganhou!!!\nO animal secreto era %s\n", game->secret_word);
-                    printf("Total de acertos: %d\n", game->score.points);
-                    printf("Total de erros: %d\n", game->score.errors);
+                    printf("Você ganhou!!!\nO animal secreto era %s\n\n", game->secret_word);
+                    printf("Acertos: %d\n", game->score.points);
+                    printf("Erros: %d\n", game->score.errors);
+                    printf("Total de acertos: %d\n", game->score.total_points);
+                    printf("Total de erros: %d\n", game->score.total_errors);
                     printf("Partidas vencidas: %d\n", game->score.total_wins);
                     printf("Partidas perdidas: %d\n", game->score.total_losses);
-                    printf("Total de partidas jogadas: %d\n", game->score.total_matches);
+                    printf("Total de partidas jogadas: %d\n\n", game->score.total_matches);
                 }
 
                 printf("Deseja continuar jogando? [Y/n]");
                 YN=getchar();
+
+                system("clear");
+                __fpurge(stdin);
 
                 if(YN=='Y' || YN=='y'){
 
@@ -98,16 +110,17 @@ int main(void){
 
                 }else{
 
-                    if(game->score.total_matches>=3){
+                    if(GoodScore(mysql, game, &playerID)==true){
 
                         printf("Antes de sair deseja registrar sua pontuação? [Y/n]");
                         YN=getchar();
 
-                        system("clear");
-
                         if(YN=='Y' || YN=='y'){
 
-                            SaveScore(mysql, game);
+                            system("clear");
+                            __fpurge(stdin);
+
+                            SaveScore(mysql, game, playerID);
                         }
                     }
 
@@ -122,25 +135,32 @@ int main(void){
 
                 if(hangman(game)!=true){
 
-                    printf("Você perdeu!!!\nA fruta secreta era %s\n", game->secret_word);
-                    printf("Total de acertos: %d\n", game->score.points);
-                    printf("Total de erros: %d\n", game->score.errors);
+                    printf("Você perdeu!!!\nA fruta secreta era %s\n\n", game->secret_word);
+                    printf("Acertos: %d\n", game->score.points);
+                    printf("Erros: %d\n", game->score.errors);
+                    printf("Total de acertos: %d\n", game->score.total_points);
+                    printf("Total de erros: %d\n", game->score.total_errors);
                     printf("Partidas vencidas: %d\n", game->score.total_wins);
                     printf("Partidas perdidas: %d\n", game->score.total_losses);
-                    printf("Total de partidas jogadas: %d\n", game->score.total_matches);
+                    printf("Total de partidas jogadas: %d\n\n", game->score.total_matches);
 
                 }else{
 
-                    printf("Você ganhou!!!\nA fruta secreta era %s\n", game->secret_word);
-                    printf("Total de acertos: %d\n", game->score.points);
-                    printf("Total de erros: %d\n", game->score.errors);
+                    printf("Você ganhou!!!\nA fruta secreta era %s\n\n", game->secret_word);
+                    printf("Acertos: %d\n", game->score.points);
+                    printf("Erros: %d\n", game->score.errors);
+                    printf("Total de acertos: %d\n", game->score.total_points);
+                    printf("Total de erros: %d\n", game->score.total_errors);
                     printf("Partidas vencidas: %d\n", game->score.total_wins);
                     printf("Partidas perdidas: %d\n", game->score.total_losses);
-                    printf("Total de partidas jogadas: %d\n", game->score.total_matches);
+                    printf("Total de partidas jogadas: %d\n\n", game->score.total_matches);
                 }
 
                 printf("Deseja continuar jogando? [Y/n]");
                 YN=getchar();
+
+                system("clear");
+                __fpurge(stdin);
 
                 if(YN=='Y' || YN=='y'){
 
@@ -148,16 +168,17 @@ int main(void){
 
                 }else{
 
-                    if(game->score.total_matches>=3){
+                    if(GoodScore(mysql, game, &playerID)==true){
 
                         printf("Antes de sair deseja registrar sua pontuação? [Y/n]");
                         YN=getchar();
 
-                        system("clear");
-
                         if(YN=='Y' || YN=='y'){
 
-                            SaveScore(mysql, game);
+                            system("clear");
+                            __fpurge(stdin);
+
+                            SaveScore(mysql, game, playerID);
                         }
                     }
 
@@ -172,25 +193,32 @@ int main(void){
 
                 if(hangman(game)!=true){
 
-                    printf("Você perdeu!!!\nO objeto secreto era %s\n", game->secret_word);
-                    printf("Total de acertos: %d\n", game->score.points);
-                    printf("Total de erros: %d\n", game->score.errors);
+                    printf("Você perdeu!!!\nO objeto secreto era %s\n\n", game->secret_word);
+                    printf("Acertos: %d\n", game->score.points);
+                    printf("Erros: %d\n", game->score.errors);
+                    printf("Total de acertos: %d\n", game->score.total_points);
+                    printf("Total de erros: %d\n", game->score.total_errors);
                     printf("Partidas vencidas: %d\n", game->score.total_wins);
                     printf("Partidas perdidas: %d\n", game->score.total_losses);
-                    printf("Total de partidas jogadas: %d\n", game->score.total_matches);
+                    printf("Total de partidas jogadas: %d\n\n", game->score.total_matches);
 
                 }else{
 
-                    printf("Você ganhou!!!\nO animal secreto era %s\n", game->secret_word);
-                    printf("Total de acertos: %d\n", game->score.points);
-                    printf("Total de erros: %d\n", game->score.errors);
+                    printf("Você ganhou!!!\nO animal secreto era %s\n\n", game->secret_word);
+                    printf("Acertos: %d\n", game->score.points);
+                    printf("Erros: %d\n", game->score.errors);
+                    printf("Total de acertos: %d\n", game->score.total_points);
+                    printf("Total de erros: %d\n", game->score.total_errors);
                     printf("Partidas vencidas: %d\n", game->score.total_wins);
                     printf("Partidas perdidas: %d\n", game->score.total_losses);
-                    printf("Total de partidas jogadas: %d\n", game->score.total_matches);
+                    printf("Total de partidas jogadas: %d\n\n", game->score.total_matches);
                 }
 
                 printf("Deseja continuar jogando? [Y/n]");
                 YN=getchar();
+
+                system("clear");
+                __fpurge(stdin);
 
                 if(YN=='Y' || YN=='y'){
 
@@ -198,16 +226,17 @@ int main(void){
 
                 }else{
 
-                    if(game->score.total_matches>=3){
+                    if(GoodScore(mysql, game, &playerID)==true){
 
                         printf("Antes de sair deseja registrar sua pontuação? [Y/n]");
                         YN=getchar();
 
-                        system("clear");
-
                         if(YN=='Y' || YN=='y'){
 
-                            SaveScore(mysql, game);
+                            system("clear");
+                            __fpurge(stdin);
+
+                            SaveScore(mysql, game, playerID);
                         }
                     }
 
@@ -218,21 +247,42 @@ int main(void){
 
             case '4':
 
+                if(mysql_query(&mysql->connection, "select * from players_score")!=0){
+
+                    printf("Falha na conexão\nTente novamente mais tarde...\n\n");
+
+                }else{
+
+                    mysql->res=mysql_store_result(&mysql->connection);
+
+                    while((mysql->row=mysql_fetch_row(mysql->res))!=NULL){
+
+                        for(unsigned int i=0; i<mysql_num_fields(mysql->res); i++){
+
+                            printf("%s\t", mysql->row[i]);
+                        }
+
+                        printf("\n");
+                    }
+
+                    mysql_free_result(mysql->res);
+                }
 
                 break;
 
             case '5':
 
-                if(game->score.total_matches>=3){
+                if(GoodScore(mysql, game, &playerID)==true){
 
                     printf("Antes de sair deseja registrar sua pontuação? [Y/n]");
                     YN=getchar();
 
                     system("clear");
+                    __fpurge(stdin);
 
                     if(YN=='Y' || YN=='y'){
 
-                        SaveScore(mysql, game);
+                        SaveScore(mysql, game, playerID);
                     }
                 }
 
@@ -249,7 +299,7 @@ int main(void){
                 break;
         }
 
-    }while(opc!='1' && opc!='2' && opc!='3' && opc!='4' && opc!='5');
+    }while(opc!='1' && opc!='2' && opc!='3' && opc!='5');
 
     mysql_close(&mysql->connection);
 
@@ -263,20 +313,26 @@ void MysqlStartConnection(Mysql *ptr_mysql){
 
     mysql_init(&ptr_mysql->connection);
 
-    if(mysql_real_connect(&ptr_mysql->connection, "127.0.0.1", "root", "xururuca", "hangman", 3306, NULL, 0)){
+    if(mysql_real_connect(&ptr_mysql->connection, "127.0.0.1", "root", "tkfstwa", "hangman", 3306, NULL, 0)){
 
         printf("Conexão: Ok!\n\n");
 
     }else{
 
-        printf("Conexão: falhou\nTente novamente mais tarde\n\n");
+        printf("Conexão: falhou...\nTente novamente mais tarde\n\n");
+
+        exit(1);
     }
 }
 
 
 void animals(Mysql *ptr_mysql, Game *ptr_game){
 
-    mysql_query(&ptr_mysql->connection, "select * from animals");
+    if(mysql_query(&ptr_mysql->connection, "select * from animals;")!=0){
+
+        printf("Falha na conexão\nTente novamente mais tarde...\n\n");
+        exit(1);
+    }
 
     ptr_mysql->res=mysql_store_result(&ptr_mysql->connection);
 
@@ -287,17 +343,21 @@ void animals(Mysql *ptr_mysql, Game *ptr_game){
     srand((unsigned int)time(NULL));
     unsigned int raffle=rand()%total+1;
 
-    char query[101];
+    char query[65];
 
-    snprintf(query, 101, "select secret_word, tip, chances from animals where id=%d;", raffle);
+    snprintf(query, 65, "select secret_word, tip, chances from animals where id='%d';", raffle);
 
-    mysql_query(&ptr_mysql->connection, query);
+    if(mysql_query(&ptr_mysql->connection, query)!=0){
+
+        printf("Falha na conexão\nTente novamente mais tarde...\n\n");
+        exit(1);
+    }
 
     ptr_mysql->res=mysql_store_result(&ptr_mysql->connection);
 
     while((ptr_mysql->row=mysql_fetch_row(ptr_mysql->res))!=NULL){
 
-        for(unsigned int i=0; i<mysql_num_rows(ptr_mysql->res); i++){
+        for(unsigned int i=0; i<mysql_num_fields(ptr_mysql->res); i++){
 
             if(i==0){
 
@@ -319,7 +379,11 @@ void animals(Mysql *ptr_mysql, Game *ptr_game){
 
 void fruits(Mysql *ptr_mysql, Game *ptr_game){
 
-    mysql_query(&ptr_mysql->connection, "select * from fruits");
+    if(mysql_query(&ptr_mysql->connection, "select * from fruits;")!=0){
+
+        printf("Falha na conexão\nTente novamente mais tarde...\n\n");
+        exit(1);
+    }
 
     ptr_mysql->res=mysql_store_result(&ptr_mysql->connection);
 
@@ -330,17 +394,21 @@ void fruits(Mysql *ptr_mysql, Game *ptr_game){
     srand((unsigned int)time(NULL));
     unsigned int raffle=rand()%total+1;
 
-    char query[101];
+    char query[65];
 
-    snprintf(query, 101, "select secret_word, tip, chances from fruits where id=%d;", raffle);
+    snprintf(query, 65, "select secret_word, tip, chances from fruits where id='%d';", raffle);
 
-    mysql_query(&ptr_mysql->connection, query);
+    if(mysql_query(&ptr_mysql->connection, query)!=0){
+
+        printf("Falha na conexão\nTente novamente mais tarde...\n\n");
+        exit(1);
+    }
 
     ptr_mysql->res=mysql_store_result(&ptr_mysql->connection);
 
     while((ptr_mysql->row=mysql_fetch_row(ptr_mysql->res))!=NULL){
 
-        for(unsigned int i=0; i<mysql_num_rows(ptr_mysql->res); i++){
+        for(unsigned int i=0; i<mysql_num_fields(ptr_mysql->res); i++){
 
             if(i==0){
 
@@ -362,7 +430,11 @@ void fruits(Mysql *ptr_mysql, Game *ptr_game){
 
 void objects(Mysql *ptr_mysql, Game *ptr_game){
 
-    mysql_query(&ptr_mysql->connection, "select * from objects");
+    if(mysql_query(&ptr_mysql->connection, "select * from objects;")!=0){
+
+        printf("Falha na conexão\nTente novamente mais tarde...\n\n");
+        exit(1);
+    }
 
     ptr_mysql->res=mysql_store_result(&ptr_mysql->connection);
 
@@ -373,17 +445,21 @@ void objects(Mysql *ptr_mysql, Game *ptr_game){
     srand((unsigned int)time(NULL));
     unsigned int raffle=rand()%total+1;
 
-    char query[101];
+    char query[65];
 
-    snprintf(query, 101, "select secret_word, tip, chances from objects where id='%d';", raffle);
+    snprintf(query, 65, "select secret_word, tip, chances from objects where id='%d';", raffle);
 
-    mysql_query(&ptr_mysql->connection, query);
+    if(mysql_query(&ptr_mysql->connection, query)!=0){
+
+        printf("Falha na conexão\nTente novamente mais tarde...\n\n");
+        exit(1);
+    }
 
     ptr_mysql->res=mysql_store_result(&ptr_mysql->connection);
 
     while((ptr_mysql->row=mysql_fetch_row(ptr_mysql->res))!=NULL){
 
-        for(unsigned int i=0; i<mysql_num_rows(ptr_mysql->res); i++){
+        for(unsigned int i=0; i<mysql_num_fields(ptr_mysql->res); i++){
 
             if(i==0){
 
@@ -405,7 +481,7 @@ void objects(Mysql *ptr_mysql, Game *ptr_game){
 
 bool hangman(Game *ptr_game){
 
-    char word[81];
+    char word[51];
     unsigned int i;
 
     for(i=0; i<strlen(ptr_game->secret_word); i++){
@@ -413,7 +489,10 @@ bool hangman(Game *ptr_game){
         (ptr_game->secret_word[i]==' ') ? (word[i]=' ') : (word[i]='_');
     }
 
-    word[i+1]='\0';
+    word[i]='\0';
+
+    ptr_game->score.points=0;
+    ptr_game->score.errors=0;
 
     char letter;
     int counter;
@@ -428,8 +507,10 @@ bool hangman(Game *ptr_game){
         printf("Chances restantes: %d\n", ptr_game->chances);
         printf("%s\n\n", word);
 
+        printf("Digite uma letra >");
         letter=getchar();
 
+        __fpurge(stdin);
         system("clear");
 
         if(fchar(word, letter)!=-1){
@@ -438,7 +519,7 @@ bool hangman(Game *ptr_game){
 
         }else{
 
-            for(unsigned int i=0; strlen(ptr_game->secret_word); i++){
+            for(unsigned int i=0; i<strlen(ptr_game->secret_word); i++){
 
                 if(letter==ptr_game->secret_word[i]){
 
@@ -451,11 +532,11 @@ bool hangman(Game *ptr_game){
             if(counter!=0){
 
                 ptr_game->score.points++;
-                ptr_game->chances--;
 
             }else{
 
                 ptr_game->score.errors++;
+                ptr_game->chances--;
             }
         }
 
@@ -463,8 +544,8 @@ bool hangman(Game *ptr_game){
 
             winner=false;
 
-            ptr_game->score.total_points=ptr_game->score.points;
-            ptr_game->score.total_errors=ptr_game->score.errors;
+            ptr_game->score.total_points+=ptr_game->score.points;
+            ptr_game->score.total_errors+=ptr_game->score.errors;
             ptr_game->score.total_matches++;
             ptr_game->score.total_losses++;
 
@@ -474,8 +555,8 @@ bool hangman(Game *ptr_game){
 
             winner=true;
 
-            ptr_game->score.total_points=ptr_game->score.points;
-            ptr_game->score.total_errors=ptr_game->score.errors;
+            ptr_game->score.total_points+=ptr_game->score.points;
+            ptr_game->score.total_errors+=ptr_game->score.errors;
             ptr_game->score.total_matches++;
             ptr_game->score.total_wins++;
 
@@ -486,31 +567,20 @@ bool hangman(Game *ptr_game){
     return winner;
 }
 
-void SaveScore(Mysql *ptr_mysql, Game *ptr_game){
+bool GoodScore(Mysql *ptr_mysql, Game *ptr_game, short int *playerID){
 
-    char nickname[21];
-    char password[100];
-    char query[101];
+    char query[151];
+    bool good_score=false;
 
-    printf("OBSERVAÇÕES:\n* O nickname inserido deve ter no maximo 20 caracters e sem espaços em branco.");
-    printf("* A senha digitada deve conter no mínimo 3 caracters.\n\n");
+    snprintf(query, 151, "select playerID from players_score where total_points <='%d' and"
+            " total_errors >='%d' or total_errors <='10' order by total_points asc;",
+            ptr_game->score.total_points, ptr_game->score.total_errors);
 
-    bool exitLoop=false;
-    int response_value_nick, response_value_pass;
+    if(mysql_query(&ptr_mysql->connection, query)!=0){
 
-    do{
+        printf("Falha na conexão\nTente novamente mais tarde...\n\n");
 
-        printf("Crie um nickname para registrar sua pontuação->");
-        response_value_nick=getNick(nickname, 21);
-
-        printf("Crie uma senha ->");
-        response_value_pass=getPass(password, 100);
-
-        system("clear");
-
-        snprintf(query, 101, "select * from players_score where nickname='%s';", nickname);
-
-        mysql_query(&ptr_mysql->connection, query);
+    }else{
 
         ptr_mysql->res=mysql_store_result(&ptr_mysql->connection);
 
@@ -518,36 +588,80 @@ void SaveScore(Mysql *ptr_mysql, Game *ptr_game){
 
         if(ptr_mysql->row!=NULL){
 
-            printf("O nickname inserido já existe!!!\n\n");
+            *playerID=atoi(ptr_mysql->row[0]);
+            good_score=true;
+        }
 
-        }else if(response_value_nick==-1){
+        mysql_free_result(ptr_mysql->res);
+    }
 
-            printf("O nickname não pode conter espaços em branco.\nDigite outro nickname por favor.\n\n");
+    return good_score;
+}
 
-        }else if(response_value_pass==-1){
+void SaveScore(Mysql *ptr_mysql, Game *ptr_game, short int playerID){
 
-            printf("Senha digitada muito pequena.\nDigite outra por favor.\n\n");
+    short int response;
+    char nickname[22];
+
+    do{
+
+        printf("Digite um nickname > ");
+        response=getNick(nickname);
+
+        system("clear");
+
+        if(response==-1){
+
+            printf("**Não use espaços em branco**\n-> Por favor, insira outro nickname <-\n\n");
+
+        }else if(response==1){
+
+             printf("**O maximo de caracteres para o nickname é 20**\n-> Por favor, insira outro nickname <-\n\n");
 
         }else{
 
-            exitLoop=true;
+            break;
         }
 
-    }while(exitLoop==false);
+    }while(true);
 
-    mysql_free_result(ptr_mysql->res);
+    char query[101];
 
-    snprintf(query, 101, "insert into players_score values (DEFAULT, '%s', '%s', '%d', %d', '%d', '%d', '%d');",
-             nickname, password, ptr_game->score.total_points, ptr_game->score.total_errors,
-             ptr_game->score.total_wins, ptr_game->score.total_losses, ptr_game->score.total_matches);
+    if(mysql_query(&ptr_mysql->connection, "select count(*) from players_score;")!=0){
+
+        printf("Falha na conexão\nTente novamente mais tarde...\n\n");
+
+    }else{
+
+        ptr_mysql->res=mysql_store_result(&ptr_mysql->connection);
+
+        ptr_mysql->row=mysql_fetch_row(ptr_mysql->res);
+
+        short int q=atoi(ptr_mysql->row[0]);
+
+        mysql_free_result(ptr_mysql->res);
+
+        if(q>=10){
+
+            snprintf(query, 101, "delete from players_score where playerID='%d' limit 1;", playerID);
+
+            if(mysql_query(&ptr_mysql->connection, query)!=0){
+
+                printf("Falha na conexão\nTente novamente mais tarde...\n\n");
+            }
+        }
+    }
+
+    snprintf(query, 101, "insert into players_score values(DEFAULT, '%s', '%d', '%d', '%d', '%d', '%d');",
+                nickname, ptr_game->score.total_points, ptr_game->score.total_errors, ptr_game->score.total_wins,
+                ptr_game->score.total_losses, ptr_game->score.total_matches);
 
     if(mysql_query(&ptr_mysql->connection, query)!=0){
 
-        printf("Erro de coenxão com o banco de dados\nTente novamente mais tarde\n\n");
+        printf("Falha na conexão\nTente novamente mais tarde...\n\n");
 
     }else{
 
         printf("Pontuação salva com sucesso\n\n");
     }
 }
-
