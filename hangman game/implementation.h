@@ -5,7 +5,7 @@
 
 unsigned int fchar(char *_string, char character){
 
-    unsigned int i, posi;
+    unsigned int i, posi=-1;
 
     for(i=0; i<strlen(_string); i++){
 
@@ -18,61 +18,33 @@ unsigned int fchar(char *_string, char character){
     return posi;
 }
 
-int getPass(char *pass, unsigned int _size){
+short int getNick(char *nick){
 
-    fgets(pass, _size, stdin);
+    fgets(nick, 22, stdin);
 
-    for(unsigned int i=0; i<strlen(pass); i++){
+    short int return_value=0;
 
-        if(pass[i]=='\n'){
+    if(strlen(nick)>20){
 
-            pass[i]='\0';
-        }
-    }
+        return_value=1;
 
-    int return_value;
+    }else{
 
-    if(strlen(pass)<3){
+        for(unsigned int i=0; i<strlen(nick); i++){
 
-        return_value=-1;
-    }
+            if(nick[i]==' '){
 
-    return return_value;
-}
+                return_value=-1;
+                break;
 
-int getNick(char *nick, unsigned int _size){
+            }else if(nick[i]=='\n'){
 
-    fgets(nick, _size, stdin);
-
-    unsigned int i, return_value=0;
-
-    for(i=0; i<strlen(nick); i++){
-
-        if(nick[i]==' '){
-
-            return_value=-1;
-            break;
-
-        }else if(nick[i]=='\n'){
-
-            nick[i]='\0';
+                nick[i]='\0';
+            }
         }
     }
 
     return return_value;
-}
-
-void getString(char *_string, unsigned int _size){
-
-    fgets(_string, _size, stdin);
-
-    for(unsigned int i=0; i<strlen(_string); i++){
-
-        if(_string[i]=='\n'){
-
-            _string[i]='\0';
-        }
-    }
 }
 
 #endif // IMPLEMENTATION_H_INCLUDED
